@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
 
 			request["user"] = payload;
 		} catch (e) {
-		    throw new UnauthorizedException("Invalid jwt token not provided");
+		    throw new UnauthorizedException("Invalid jwt token");
 		}
     
 		return true;

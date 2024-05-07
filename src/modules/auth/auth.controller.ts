@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { Body, Controller, HttpStatus, Post, Query } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post, Query } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../user/dtos/create-user.dto";
@@ -16,6 +16,7 @@ export class AuthController {
         private readonly authService: AuthService
 	) {}
     
+	@HttpCode(200)
     @Post("signin")
 	@ApiResponse({ status: HttpStatus.OK, description: HttpDescriptions.OK })
 	@ApiResponse({ status: HttpStatus.BAD_REQUEST, description: HttpDescriptions.BAD_REQUEST })
@@ -23,20 +24,23 @@ export class AuthController {
     	return this.authService.signIn(request);
 	}
 
+	@HttpCode(201)
     @Post("signup")
 	@ApiResponse({ status: HttpStatus.CREATED, description: HttpDescriptions.CREATED })
 	@ApiResponse({ status: HttpStatus.BAD_REQUEST, description: HttpDescriptions.BAD_REQUEST })
-    signUp(@Body() request: CreateUserDto) {
+	signUp(@Body() request: CreateUserDto) {
     	return this.authService.signUp(request);
-    }
+	}
 
-	@Post("forgotpassowrd")
+	@HttpCode(200)
+	@Post("forgotpassword")
 	@ApiResponse({ status: HttpStatus.OK, description: HttpDescriptions.OK })
 	@ApiResponse({ status: HttpStatus.NOT_FOUND, description: HttpDescriptions.NOT_FOUND })
-    forgotPassword(@Query("email") email: string) {
+	forgotPassword(@Query("email") email: string) {
     	return this.authService.sendEmail(email);
-    }
+	}
 
+	@HttpCode(200)
 	@Post("changepassword")
 	@ApiResponse({ status: HttpStatus.OK, description: HttpDescriptions.OK })
 	@ApiResponse({ status: HttpStatus.NOT_FOUND, description: HttpDescriptions.NOT_FOUND })

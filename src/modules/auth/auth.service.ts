@@ -19,22 +19,26 @@ export class AuthService {
 	) {}
 
 	async signIn(data: UserSignInDto) {
-		const user = await this.userService.findUserByEmail(data.email);
+		try {
+			const user = await this.userService.findUserByEmail(data.email);
 		
-		if(!(await bcrypt.compare(data.password, user.password))) throw new UnauthorizedException("Incorrect email or password");
+			if(!(await bcrypt.compare(data.password, user.password))) throw new Error();
 
-		const payload = { 
-			id: user.id, 
-			username: user.username, 
-			email: user.email, 
-			role: user.role 
-		};
+			const payload = { 
+				id: user.id, 
+				username: user.username, 
+				email: user.email, 
+				role: user.role 
+			};
 
-		return {
-			acess_token: await this.jwtService.signAsync(payload, {
-				secret: this.authConfiguration.secret
-			})
-		};
+			return {
+				acess_token: await this.jwtService.signAsync(payload, {
+					secret: this.authConfiguration.secret
+				})
+			};
+		} catch {
+			throw new UnauthorizedException("Email ou senha incorretos");
+		}
 	}
 
 	async signUp(data: CreateUserDto) {
@@ -70,8 +74,8 @@ export class AuthService {
 	async changePassword(token: string, changePasswordDto: ChangePasswordDto) {
 		const user = await this.userService.findUserByEmail(changePasswordDto.email);
 		if(!user.token) throw new UnauthorizedException("Token not regitred in user");
-		if(user.tokenDate.getTime() < new Date().getTime()) throw new UnauthorizedException("Invalid or expired token");
-		if(!(await bcrypt.compare(token, user.token))) throw new UnauthorizedException("Incorrect token");
+		if(user.tokenDate.getTime() < new Date().getTime()) throw new UnauthorizedException("Token invlido ou expirado");
+		if(!(await bcrypt.compare(token, user.token))) throw new UnauthorizedException("Token incorreto");
 		this.userService.updateUser(user.id, { password: changePasswordDto.password, token: null, tokenDate: null });
 	}
 

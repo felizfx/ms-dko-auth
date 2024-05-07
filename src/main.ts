@@ -4,6 +4,7 @@ import { AppConfigService } from "./config/app/configuration.service";
 import { SwaggerConfigService } from "./config/swagger/configuration.service";
 import { ValidationPipe } from "@nestjs/common";
 import { useContainer } from "class-validator";
+// import { ApiresponseIntercptor } from "./common/interceptors/api-response.interceptor";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -12,6 +13,7 @@ async function bootstrap() {
 
 	app.enableCors();
 	app.setGlobalPrefix("/api/v1");
+	// app.useGlobalInterceptors(new ApiresponseIntercptor());
 	app.useGlobalPipes(new ValidationPipe({
 		whitelist: true
 	}));

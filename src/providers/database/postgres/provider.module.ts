@@ -12,6 +12,7 @@ import { PostgresConfigService } from "src/config/database/postgres/config.servi
 				url: postgresConfigService.url,
 				autoLoadEntities: true,
 				synchronize: true,
+				// ssl: true
 			}),
 			inject: [PostgresConfigService]
 		} as TypeOrmModuleAsyncOptions)

@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import configuration from "./configuration";
-import { EmailConfigurationService } from "./configuration.service";
+import { KafkaConfigurationService } from "./configuration.service";
 
 @Module({
 	imports: [
@@ -9,7 +9,7 @@ import { EmailConfigurationService } from "./configuration.service";
 			load: [configuration]
 		})
 	],
-	providers: [ConfigService, EmailConfigurationService],
-	exports: [ConfigService, EmailConfigurationService]
+	providers: [ConfigService, KafkaConfigurationService],
+	exports: [ConfigService, KafkaConfigurationService],
 })
-export class EmailConfigurationModule {}
+export class KafkaConfigurationModule {}

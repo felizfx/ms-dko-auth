@@ -4,7 +4,7 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { UserModule } from "../user/user.module";
 import { JwtModule } from "@nestjs/jwt";
-import { EmailModule } from "../email/email.module";
+import { KafkaModule } from "src/providers/queue/kafka/kafka.module";
 
 @Module({
 	imports: [
@@ -14,7 +14,7 @@ import { EmailModule } from "../email/email.module";
 			global: true,
 			signOptions: { expiresIn: "3h" },
 		}),
-		EmailModule
+		KafkaModule,
 	],
 	controllers: [AuthController],
 	providers: [AuthService]

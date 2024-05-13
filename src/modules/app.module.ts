@@ -7,7 +7,6 @@ import { AuthModule } from "./auth/auth.module";
 import { AuthGuard } from "src/common/guards/auth.guard";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthConfigModule } from "src/config/auth/configuration.module";
-import { EmailModule } from "./email/email.module";
 import { MongoDatabaseProviderModule } from "src/providers/database/mongo/provider.module";
 
 @Module({
@@ -15,7 +14,6 @@ import { MongoDatabaseProviderModule } from "src/providers/database/mongo/provid
 		AppConfigModule, 
 		AuthConfigModule,
 		AuthModule,
-		EmailModule,
 		MongoDatabaseProviderModule,
 		PostgresDatabaseProviderModule,
 		SwaggerConfigModule,

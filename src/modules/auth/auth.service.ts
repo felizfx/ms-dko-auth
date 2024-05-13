@@ -1,21 +1,23 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { Injectable, NotFoundException, OnModuleInit, UnauthorizedException } from "@nestjs/common";
 import { AuthConfigService } from "src/config/auth/configuration.service";
 import { UserService } from "../user/user.service";
 import { CreateUserDto } from "../user/dtos/create-user.dto";
 import { JwtService } from "@nestjs/jwt";
 import { UserSignInDto } from "./dtos/user-sign-in.dto";
-import { EmailService } from "../email/email.service";
 import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
 import { ChangePasswordDto } from "./dtos/change-password.dto";
+import { ProducerService } from "src/providers/queue/kafka/producer.service";
+import { ConsumerService } from "src/providers/queue/kafka/consumer.service";
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
 	constructor (
 		private readonly userService: UserService,
         private readonly authConfiguration: AuthConfigService,
 		private readonly jwtService: JwtService,
-		private readonly emailService: EmailService
+		private readonly consumerService: ConsumerService,
+		private readonly producerService: ProducerService,
 	) {}
 
 	async signIn(data: UserSignInDto) {
@@ -65,7 +67,8 @@ export class AuthService {
 			tokenDate.setMinutes(tokenDate.getMinutes() + 10);
 
 			this.userService.updateUser(user.id, { token, tokenDate });
-			this.emailService.sendNewPasswordMail(email, user.username.charAt(0).toUpperCase() + user.username.slice(1), token);
+
+			this.sendEmailTopic(email, user.username.charAt(0).toUpperCase() + user.username.slice(1), token);
 		} catch (e) {
 			if (e instanceof NotFoundException) throw new NotFoundException(`User not found for the email ${email}`);
 		}
@@ -79,4 +82,34 @@ export class AuthService {
 		this.userService.updateUser(user.id, { password: changePasswordDto.password, token: null, tokenDate: null });
 	}
 
+	sendEmailTopic(email: string, username: string, token: string) {
+		this.producerService.produce({
+			topic: "forgot_password_email_sender",
+			messages: [
+				{ 
+					value: JSON.stringify({
+						email,
+						username,
+						token
+					}) 
+				},
+			],
+		});
+	}
+
+	async onModuleInit() {
+		this.consumerService.consume(
+			{
+				topics: ["confirm_email_send"],
+				groupId: "receive_confirmation_consumer"
+			},
+			{
+				eachMessage: async ({ message }) => {
+					console.log({
+						value: message.value.toString(),
+					});
+				}
+			}
+		);
+	}
 }

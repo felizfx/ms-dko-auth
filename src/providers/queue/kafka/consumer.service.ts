@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnApplicationShutdown } from "@nestjs/common";
-import { Consumer, ConsumerRunConfig, ConsumerSubscribeTopics, Kafka } from "kafkajs";
+import { Consumer, ConsumerRunConfig, ConsumerSubscribeTopics, Kafka, logLevel } from "kafkajs";
 import { KafkaConfigurationService } from "src/config/kafka/configuration.service";
 
 type ExtendedConsumerSubscribeTopics = ConsumerSubscribeTopics & { groupId: string };
@@ -12,6 +12,7 @@ export class ConsumerService implements OnApplicationShutdown {
 		this.kafka = new Kafka({
 			clientId: "explaning_nest_api",
 			brokers: [this.kafkaConfigurationService.brokers],
+			logLevel: logLevel.NOTHING
 		});
 		this.consumers = [];
 		this.logger = new Logger(ConsumerService.name);
@@ -24,7 +25,10 @@ export class ConsumerService implements OnApplicationShutdown {
 
 	async consume(topics: ExtendedConsumerSubscribeTopics, config: ConsumerRunConfig) {
 		this.logger.warn(`Subscribing on topic ${topics.topics}`);
-		this.consumer = this.kafka.consumer({ groupId: topics.groupId });
+		this.consumer = this.kafka.consumer({ 
+			groupId: topics.groupId, 
+			allowAutoTopicCreation: true, 
+		});
 		await this.consumer.connect();
 		await this.consumer.subscribe(topics);
 		await this.consumer.run(config);

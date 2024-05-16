@@ -15,6 +15,13 @@ export class AuthController {
 	constructor (
         private readonly authService: AuthService
 	) {}
+
+	// @Get("teste")
+	// teste() {
+	// 	this.authService.prduceTest();
+	// 	this.authService.produceConfirmEmailSend("teste@gmail.com", "teste123");
+	// 	return "Hello World";
+	// }
     
 	@HttpCode(200)
     @Post("signin")

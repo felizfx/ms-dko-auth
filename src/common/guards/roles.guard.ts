@@ -39,7 +39,7 @@ export class RolesGuard implements CanActivate {
 		}
 
 		// if(request["user"].role !== role) throw new ForbiddenException("User role not qualified");
-		// ou (isso afeta um pouco no desempnaho da aplicação \o/)
+		// ou (isso afeta um pouco	 no desempnaho da aplicação \o/)
 		const user = await  this.userRespository.findOneBy({ id: request["user"].id });
 		if(user.role !== role) throw new ForbiddenException("User role not qualified");
 

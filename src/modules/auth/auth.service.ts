@@ -97,19 +97,80 @@ export class AuthService implements OnModuleInit {
 		});
 	}
 
+	prduceTest() {
+		this.producerService.produce({
+			topic: "teste123",
+			messages: [
+				{ 
+					value: JSON.stringify({
+						teste: "teste"
+					}) 
+				},
+			],
+		});
+	}
+
+	// produceConfirmEmailSend(email: string, username: string) {
+	// 	this.producerService.produce({
+	// 		topic: "confirm_email_send",
+	// 		messages: [
+	// 			{ 
+	// 				value: JSON.stringify({
+	// 					email,
+	// 					username
+	// 				}) 
+	// 			},
+	// 		],
+	// 	});
+	// }
+
 	async onModuleInit() {
-		this.consumerService.consume(
-			{
-				topics: ["confirm_email_send"],
-				groupId: "receive_confirmation_consumer"
-			},
-			{
-				eachMessage: async ({ message }) => {
-					console.log({
-						value: message.value.toString(),
-					});
-				}
-			}
-		);
+		// await this.consumerService.consume(
+		// 	{
+		// 		topics: ["confirm_email_send"],
+		// 		groupId: "receive_confirmation_consumer"
+		// 	},
+		// 	{
+		// 		eachMessage: async ({ message, topic }) => {
+		// 			console.log({
+		// 				topic,
+		// 				group: "receive_confirmation_consumer",
+		// 				value: message.value.toString(),
+		// 			});
+		// 		}
+		// 	}
+		// );
+
+		// await this.consumerService.consume(
+		// 	{
+		// 		topics: ["teste123"],
+		// 		groupId: "test1"
+		// 	},
+		// 	{
+		// 		eachMessage: async ({ message, topic }) => {
+		// 			console.log({
+		// 				topic,
+		// 				group: "test1",
+		// 				value: message.value.toString(),
+		// 			});
+		// 		}
+		// 	}
+		// );
+
+		// await this.consumerService.consume(
+		// 	{
+		// 		topics: ["confirm_email_send", "teste123"],
+		// 		groupId: "logger_consumer"
+		// 	},
+		// 	{
+		// 		eachMessage: async ({ message, topic }) => {
+		// 			console.log({
+		// 				topic,
+		// 				group: "logger_consumer",
+		// 				value: message.value.toString(),
+		// 			});
+		// 		}
+		// 	}
+		// );
 	}
 }
